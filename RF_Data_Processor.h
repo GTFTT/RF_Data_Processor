@@ -54,8 +54,10 @@ class RF_Data_Processor
     /*Set reading pipe adderes, provide array with 5 characters and one closing character(char[5] = "00009")*/
     void setReadingPipeAddress(char address[]);
 
-    /*Call dhis to receive message instantly and return it back to the user*/
+    /*Call this to receive message instantly and return it back to the user*/
     String receive(void);
+
+    String receiveJson(void);
 
     /*Send json in special format, it will be decoded later after receiving*/
     void sendJson(char message[], int messageSize);
@@ -65,6 +67,9 @@ class RF_Data_Processor
     
     /*Send raw string*/
     void send(String message);
+
+    String RF_Data_Processor::getLastJson(void);
+    bool RF_Data_Processor::available(void);
   private:
     static RF24* _radio; //Static pointer is used because it does not disapper
 
@@ -75,6 +80,16 @@ class RF_Data_Processor
     byte WritingPipeAddress[6] = {}; /* Address to which data to be transmitted*/
     byte ReadingPipeAddress[6] = {}; /* Address from which we receive messages */
 
+    int lastJsonPackId;
+    int lastJsonNumber;
+    int lastJsonCode;
+    String jsonBuffer;
+    String lastJson;
+    bool newJsonAvailable;
+
+    void RF_Data_Processor::clearJsonBuffer(void);
+    void RF_Data_Processor::generateJsonFromBuffer(void);
+    
     /*Each time this function is called it increments lastPackId, but the maximum pack id is 99 and min value is 1*/
     int RF_Data_Processor::getLastPackId(void);
 };

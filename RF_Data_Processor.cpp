@@ -4,6 +4,13 @@ RF_Data_Processor::RF_Data_Processor() {
   TRANSMITTING_DELAY = 60;
   RECEIVING_DELAY = 10;
   SETUP_DELAY = 60;
+
+  lastJsonPackId = 0;
+  lastJsonNumber = 0;
+  lastJsonCode = 0;
+  jsonBuffer = "";
+  lastJson = "";
+  newJsonAvailable = false;
 }
 
 //----- Public ----------------------------------------------------------------------------------------------
@@ -45,7 +52,63 @@ void RF_Data_Processor::setupRadioForReading() {
   }
 }
 
-/*Receive message with RF communication*/
+String RF_Data_Processor::receiveJson(void) {
+  String pack = receive(); //Get data from RF
+  if(pack == "") return "";
+
+  DynamicJsonDocument docPack(64);
+  deserializeJson(docPack, pack);
+  // String deser;
+  // serializeJson(docPack, deser);
+
+  const int type = docPack["m"][0];
+  const int packNumber = docPack["m"][1];
+  const int packId = docPack["m"][2];
+
+  const char* data = docPack["d"];
+
+  //If packNumber does not equal per+1 then clear buffer
+  //If packId not equal prev, then clear buffer
+  if(packNumber != lastJsonNumber+1 || packId != lastJsonPackId) {
+    clearJsonBuffer();
+  }
+
+  //If operType == 1 - put data into buffer and send it for processing
+  if(type == 1) {
+    jsonBuffer = (String) data;
+    generateJsonFromBuffer();
+  }
+  //if operType == 2 - put data into buffer
+  if(type == 2) {
+    jsonBuffer = (String) data;
+  }
+  //If operType == 3 - append data to the buffer
+  if(type == 3) {
+    jsonBuffer += (String) data;
+  }
+  //If operType == 4 - append data to the buffer and call processing
+  if(type == 4) {
+    jsonBuffer += (String) data;
+    generateJsonFromBuffer();
+  }
+
+  //Set global cash for JSONs
+  lastJsonPackId = packId;
+  lastJsonCode = type;
+  lastJsonNumber = packNumber;
+
+  return (String) data;
+}
+
+String RF_Data_Processor::getLastJson(void) {
+  newJsonAvailable = false;
+  return String(lastJson);
+}
+
+bool RF_Data_Processor::available(void) {
+  return newJsonAvailable;
+}
+
 String RF_Data_Processor::receive(void) {
   String result = "";
     while (_radio -> available()) {
@@ -157,6 +220,17 @@ void RF_Data_Processor::send(char* message, int messageSize) {
 
 
 //----- Private ---------------------------------------------------------------------------------------------
+
+void RF_Data_Processor::clearJsonBuffer(void) {
+  jsonBuffer = "";
+}
+
+void RF_Data_Processor::generateJsonFromBuffer(void) {
+  jsonBuffer.replace("$", "\"");
+  lastJson = String(jsonBuffer);
+  clearJsonBuffer();
+  newJsonAvailable = true;
+}
 
 int RF_Data_Processor::getLastPackId(void) {
   int res = lastPackId;
