@@ -78,6 +78,7 @@ class RF_Data_Processor
     static RF24* _radio; //Static pointer is used because it does not disapper
 
     int TRANSMITTING_DELAY; //Time for transmitting a message
+    int COUNT_OF_ATTEMPTS; //How meny time to try to send one pack a message
     int RECEIVING_DELAY; //Time for receiving a message
     int SETUP_DELAY; //Time for setup modem
     int lastPackId = 1; //Last id of sent pack(99 is maximum value and 1 is minimum)

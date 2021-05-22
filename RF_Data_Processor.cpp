@@ -1,9 +1,10 @@
 #include "RF_Data_Processor.h"
 
 RF_Data_Processor::RF_Data_Processor() {
-  TRANSMITTING_DELAY = 60;
+  TRANSMITTING_DELAY = 20;
   RECEIVING_DELAY = 10;
   SETUP_DELAY = 60;
+  COUNT_OF_ATTEMPTS = 5;
 
   lastJsonPackId = 0;
   lastJsonNumber = 0;
@@ -216,9 +217,18 @@ void RF_Data_Processor::send(char* message, int messageSize) {
   for(int i = 0; i < countOfPacks; i++) {
     int numOfBytesToSend = ((i+1) == countOfPacks)? messageSize%32: 32;
     char* pointer = message + (i*32);
-    _radio -> write(pointer, numOfBytesToSend);
 
-    delay(TRANSMITTING_DELAY); //Time to perform transmitting
+    bool wasPackSend = false;
+
+    //Send pack, if fails repeat, if to many attempts then stop trying
+    for(int countOfAttempts = 0; countOfAttempts < COUNT_OF_ATTEMPTS; countOfAttempts++) {
+      wasPackSend = _radio -> write(pointer, numOfBytesToSend);
+      delay(TRANSMITTING_DELAY); //Time to perform transmitting
+      if(wasPackSend) return;
+    }
+
+    //Stop sending if it fails
+    if(!wasPackSend) return;
   }
 }
 
