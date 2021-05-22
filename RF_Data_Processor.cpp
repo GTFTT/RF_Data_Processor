@@ -116,7 +116,7 @@ bool RF_Data_Processor::available(void) {
 
 String RF_Data_Processor::receive(void) {
   String result = "";
-    while (_radio -> available()) {
+    if (_radio -> available()) {
         char text[32] = "";
         _radio -> read(&text, sizeof(text));
         result = result + text;
