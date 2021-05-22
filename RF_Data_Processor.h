@@ -61,7 +61,7 @@ class RF_Data_Processor
     String receiveJson(void);
 
     /*Manually provide JSON and procees it to generetae full result*/
-    void pushJsonPack(String pack);
+    String pushJsonPack(String pack);
 
     /*Send json in special format, it will be decoded later after receiving*/
     void sendJson(char message[], int messageSize);

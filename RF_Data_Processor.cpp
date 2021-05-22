@@ -59,10 +59,10 @@ String RF_Data_Processor::receiveJson(void) {
   return pack; //Return pack
 }
 
-void RF_Data_Processor::pushJsonPack(String pack) {
-  if(pack == "") return;
+String RF_Data_Processor::pushJsonPack(String pack) {
+  if(pack == "") return "";
 
-  DynamicJsonDocument docPack(64);
+  DynamicJsonDocument docPack(128);
   deserializeJson(docPack, pack);
 
   const int type = docPack["m"][0];
@@ -71,7 +71,7 @@ void RF_Data_Processor::pushJsonPack(String pack) {
 
   const char* data = docPack["d"];
 
-  if((packNumber == lastJsonNumber && packId == lastJsonPackId)) return; //Return if pack was received again
+  if((packNumber == lastJsonNumber && packId == lastJsonPackId)) return ""; //Return if pack was received again
 
   //If packNumber does not equal per+1 then clear buffer
   //If packId not equal prev, then clear buffer
@@ -102,6 +102,8 @@ void RF_Data_Processor::pushJsonPack(String pack) {
     lastJsonCode = type;
     lastJsonNumber = packNumber;
   }
+
+  return (String)data;
 }
 
 
