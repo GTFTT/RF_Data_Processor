@@ -54,12 +54,15 @@ void RF_Data_Processor::setupRadioForReading() {
 
 String RF_Data_Processor::receiveJson(void) {
   String pack = receive(); //Get data from RF
+  pushJsonPack(pack); //Proceed
+  return pack; //Return pack
+}
+
+void RF_Data_Processor::pushJsonPack(String pack) {
   if(pack == "") return "";
 
   DynamicJsonDocument docPack(64);
   deserializeJson(docPack, pack);
-  // String deser;
-  // serializeJson(docPack, deser);
 
   const int type = docPack["m"][0];
   const int packNumber = docPack["m"][1];
@@ -99,6 +102,7 @@ String RF_Data_Processor::receiveJson(void) {
 
   return (String) data;
 }
+
 
 String RF_Data_Processor::getLastJson(void) {
   newJsonAvailable = false;

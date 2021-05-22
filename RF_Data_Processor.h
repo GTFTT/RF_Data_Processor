@@ -57,7 +57,11 @@ class RF_Data_Processor
     /*Call this to receive message instantly and return it back to the user*/
     String receive(void);
 
+    /*Receive JSON via radio comunication and procees it to generetae full result*/
     String receiveJson(void);
+
+    /*Manually provide JSON and procees it to generetae full result*/
+    void pushJsonPack(String pack);
 
     /*Send json in special format, it will be decoded later after receiving*/
     void sendJson(char message[], int messageSize);
