@@ -72,33 +72,33 @@ void RF_Data_Processor::pushJsonPack(String pack) {
 
   //If packNumber does not equal per+1 then clear buffer
   //If packId not equal prev, then clear buffer
-  if(packNumber != lastJsonNumber+1 || packId != lastJsonPackId) {
+  if(type != 1 && type != 2 && (packNumber != lastJsonNumber+1 || packId != lastJsonPackId)) {
     clearJsonBuffer();
-  }
+  } else {
+    
+    if(type == 1) { // If operType == 1 - put data into buffer and send it for processing
+      jsonBuffer = (String) data;
+      generateJsonFromBuffer();
+    }
+    
+    if(type == 2) { // if operType == 2 - put data into buffer
+      jsonBuffer = (String) data;
+    }
+    
+    if(type == 3) { // If operType == 3 - append data to the buffer
+      jsonBuffer += (String) data;
+    }
+    
+    if(type == 4) { // If operType == 4 - append data to the buffer and call processing
+      jsonBuffer += (String) data;
+      generateJsonFromBuffer();
+    }
 
-  //If operType == 1 - put data into buffer and send it for processing
-  if(type == 1) {
-    jsonBuffer = (String) data;
-    generateJsonFromBuffer();
+    //Set global values for last json pack info JSONs
+    lastJsonPackId = packId;
+    lastJsonCode = type;
+    lastJsonNumber = packNumber;
   }
-  //if operType == 2 - put data into buffer
-  if(type == 2) {
-    jsonBuffer = (String) data;
-  }
-  //If operType == 3 - append data to the buffer
-  if(type == 3) {
-    jsonBuffer += (String) data;
-  }
-  //If operType == 4 - append data to the buffer and call processing
-  if(type == 4) {
-    jsonBuffer += (String) data;
-    generateJsonFromBuffer();
-  }
-
-  //Set global cash for JSONs
-  lastJsonPackId = packId;
-  lastJsonCode = type;
-  lastJsonNumber = packNumber;
 
   return (String) data;
 }
@@ -227,6 +227,9 @@ void RF_Data_Processor::send(char* message, int messageSize) {
 
 void RF_Data_Processor::clearJsonBuffer(void) {
   jsonBuffer = "";
+  lastJsonPackId = -1;
+  lastJsonCode = -1;
+  lastJsonNumber = -1;
 }
 
 void RF_Data_Processor::generateJsonFromBuffer(void) {
