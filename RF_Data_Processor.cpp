@@ -71,6 +71,8 @@ void RF_Data_Processor::pushJsonPack(String pack) {
 
   const char* data = docPack["d"];
 
+  if((packNumber == lastJsonNumber && packId == lastJsonPackId)) return; //Return if pack was received again
+
   //If packNumber does not equal per+1 then clear buffer
   //If packId not equal prev, then clear buffer
   if(type != 1 && type != 2 && (packNumber != lastJsonNumber+1 || packId != lastJsonPackId)) {
