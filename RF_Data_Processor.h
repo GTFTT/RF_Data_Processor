@@ -72,8 +72,8 @@ class RF_Data_Processor
     /*Send raw string*/
     void send(String message);
 
-    String RF_Data_Processor::getLastJson(void);
-    bool RF_Data_Processor::available(void);
+    String getLastJson(void);
+    bool available(void);
   private:
     static RF24* _radio; //Static pointer is used because it does not disapper
 
@@ -92,11 +92,11 @@ class RF_Data_Processor
     String lastJson;
     bool newJsonAvailable;
 
-    void RF_Data_Processor::clearJsonBuffer(void);
-    void RF_Data_Processor::generateJsonFromBuffer(void);
+    void clearJsonBuffer(void);
+    void generateJsonFromBuffer(void);
     
     /*Each time this function is called it increments lastPackId, but the maximum pack id is 99 and min value is 1*/
-    int RF_Data_Processor::getLastPackId(void);
+    int getLastPackId(void);
 };
 
 #endif

@@ -60,7 +60,7 @@ String RF_Data_Processor::receiveJson(void) {
 }
 
 void RF_Data_Processor::pushJsonPack(String pack) {
-  if(pack == "") return "";
+  if(pack == "") return;
 
   DynamicJsonDocument docPack(64);
   deserializeJson(docPack, pack);
@@ -102,8 +102,6 @@ void RF_Data_Processor::pushJsonPack(String pack) {
     lastJsonCode = type;
     lastJsonNumber = packNumber;
   }
-
-  return (String) data;
 }
 
 
