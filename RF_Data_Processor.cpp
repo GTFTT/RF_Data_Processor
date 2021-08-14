@@ -2,8 +2,8 @@
 
 RF_Data_Processor::RF_Data_Processor() {
   TRANSMITTING_DELAY = 0; //Send as fast as possible
-  RECEIVING_DELAY = 5; //Delay for stability(experimental)
-  SETUP_DELAY = 5;
+  RECEIVING_DELAY = 0; //Delay for stability(experimental)
+  SETUP_DELAY = 0;
   COUNT_OF_ATTEMPTS = 5;
 
   lastJsonPackId = 0;
